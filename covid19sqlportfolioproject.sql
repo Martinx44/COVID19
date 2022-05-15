@@ -27,11 +27,11 @@ order by 1,2
 
 
 -- Total Cases vs Population
--- Shows what percentage of population infected with Covid
+-- Shows what percentage of Nigeria population infected with Covid
 
 Select Location, date, Population, total_cases,  (total_cases/population)*100 as PercentPopulationInfected
 From PortfolioProject..CovidDeath
---Where location like '%states%'
+--Where location like '%NIGERIA%'
 order by 1,2
 
 
@@ -82,8 +82,9 @@ order by 1,2
 -- Total Population vs Vaccinations
 -- Shows Percentage of Population that has recieved at least one Covid Vaccine
 
+
 Select dea.continent, dea.location, dea.date, dea.population, vac.new_vaccinations
-, SUM(CONVERT(int,vac.new_vaccinations)) OVER (Partition by dea.Location Order by dea.location, dea.Date) as RollingPeopleVaccinated
+, SUM(CONVERT(bigint,vac.new_vaccinations)) OVER (Partition by dea.Location Order by dea.location, dea.Date) as RollingPeopleVaccinated
 --, (RollingPeopleVaccinated/population)*100
 From PortfolioProject..CovidDeath dea
 Join PortfolioProject..CovidVaccination vac
@@ -99,7 +100,7 @@ With PopvsVac (Continent, Location, Date, Population, New_Vaccinations, RollingP
 as
 (
 Select dea.continent, dea.location, dea.date, dea.population, vac.new_vaccinations
-, SUM(CONVERT(int,vac.new_vaccinations)) OVER (Partition by dea.Location Order by dea.location, dea.Date) as RollingPeopleVaccinated
+, SUM(CONVERT(bigint,vac.new_vaccinations)) OVER (Partition by dea.Location Order by dea.location, dea.Date) as RollingPeopleVaccinated
 --, (RollingPeopleVaccinated/population)*100
 From PortfolioProject..CovidDeath dea
 Join PortfolioProject..CovidVaccination vac
@@ -113,7 +114,7 @@ From PopvsVac
 
 
 
--- Using Temp Table to perform Calculation on Partition By in previous query
+-- creating Temp Table to perform Calculation on Partition By in previous query
 
 DROP Table if exists #PercentPopulationVaccinated
 Create Table #PercentPopulationVaccinated
@@ -143,7 +144,7 @@ From #PercentPopulationVaccinated
 
 
 
--- Creating View to store data for later visualizations
+-- Creating View for later visualizations
 
 Create View PercentPopulationVaccinated as
 Select dea.continent, dea.location, dea.date, dea.population, vac.new_vaccinations
